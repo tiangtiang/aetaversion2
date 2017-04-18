@@ -17,6 +17,8 @@ public class HttpRequest {
 	private Map<String, List<String>> headMap = new HashMap<String, List<String>>();	
 	//http请求参数信息
 	private Map<String, String> paramMap = new HashMap<String, String>();			
+	
+	protected boolean badRequest = false;
 	public HttpRequest(HttpExchange ex){
 		exchange = ex;
 		initHeaderMap();
@@ -84,6 +86,8 @@ public class HttpRequest {
 	 */
 	public String getHeadValue(String headKey){
 		List<String> values = headMap.get(headKey);
+		if(values == null)
+			return null;
 		StringBuilder sb = new StringBuilder();
 		for(String str : values){
 			sb.append(str+"\n");
@@ -113,11 +117,36 @@ public class HttpRequest {
 			String params = exchange.getRequestURI().getQuery();
 			if(params == null)
 				return;
-			String[] temp = params.split("&");
-			for(String str : temp){
-				paramMap.put(str.split("=")[0], str.split("=")[1]);
-			}
+			badRequest = !analysis(params, paramMap);
+		}else if(method.equals("POST")){
+			getPostParam();
 		}
+	}
+	
+	private boolean analysis(String str, Map<String, String> param){
+		String[] paraPair = str.split("&");
+		for(String pair : paraPair){
+			String[] entry = pair.split("=");
+			if(entry.length != 2)
+				return false;
+			else
+				param.put(entry[0], entry[1]);
+		}
+		return true;
+	}
+	
+	private void getPostParam(){
+		String boundry = getHeadValue("boundry");	//获取分割符
+		if(boundry!=null){			//存在分隔符，同时发送参数和文件
+			
+		}else{						//不存在分隔符，只发送了参数
+			String content = getStringRequestBody();
+			badRequest = !analysis(content, paramMap);
+		}
+	}
+	
+	public boolean isBadRequest(){
+		return badRequest;
 	}
 	/**
 	 * 将请求体以字符串的形式读取
@@ -133,7 +162,7 @@ public class HttpRequest {
 		String line;
 		try {
 			while((line = reader.readLine())!= null){
-				sb.append(line+"\n");
+				sb.append(line);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -151,11 +180,12 @@ public class HttpRequest {
 		InputStream in = exchange.getRequestBody();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		try {
-			FileWriter writer = new FileWriter(new File("receive.txt"), false);
+			FileWriter writer= new FileWriter(new File("receive.txt"), false);
 			String line;
 			while((line = reader.readLine())!=null)
 				writer.write(line+"\n");
 			writer.flush();
+			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

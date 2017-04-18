@@ -1,10 +1,11 @@
 package receive;
 
-import util.HttpRequest;
 import util.HttpResponse;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
+import response.NotFoundResponse;
 /**
  * 处理http请求，在这个类中根据不同的http请求调用不同的响应类进行响应
  * @author tiang
@@ -23,9 +24,10 @@ public class ReceiveHandler implements HttpHandler{
 	@Override
 	public void handle(HttpExchange exchange) {
 		// TODO Auto-generated method stub
-		HttpRequest request = new HttpRequest(exchange);
-		String url = request.getRequstUri();
+		String url = exchange.getRequestURI().toString();
 		HttpResponse res = ResponseFilter.create().getResponse(url, exchange);
+		if(res == null)
+			res = new NotFoundResponse(exchange);
 		res.response();
 	}
 

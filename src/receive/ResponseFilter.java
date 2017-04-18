@@ -51,7 +51,7 @@ public class ResponseFilter {
 			response = (HttpResponse)construct.newInstance(ex);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
