@@ -26,7 +26,7 @@ public class DbConnectName{
 	 * @date 2017-04-16
 	 * @version 1.0
 	*/
-	void getAllDbNames(){
+	 static void  getAllDbNames(){
 		try {   
 			    File f = new File(CONFIGFILE);   
 			    SAXReader reader = new SAXReader();   

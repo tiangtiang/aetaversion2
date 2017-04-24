@@ -4,4 +4,32 @@
 		<request>/login</request>
 		<response>LoginResponse</response>
 	</http>
+	<http>
+		<request>/timesyn</request>
+		<response>TimeSynResponse</response>
+	</http>
+	<http>
+		<request>/warning</request>
+		<response>WarnResponse</response>
+	</http>
+	<http>
+		<request>/parameters</request>
+		<response>ParametersResponse</response>
+	</http>
+	<http>
+		<request>/state</request>
+		<response>StateResponse</response>
+	</http>
+	<http>
+		<request>/logfile</request>
+		<response>LogfileResponse</response>
+	</http>
+	<http>
+		<request>/command</request>
+		<response>CommandResponse</response>
+	</http>
+	<http>
+		<request>/datapost</request>
+		<response>DatapostResponse</response>
+	</http>
 </redirection>

@@ -29,7 +29,7 @@ public class ResponseFilter {
 	private static ResponseFilter filter = new ResponseFilter();
 	
 	private ResponseFilter(){
-		load();
+		load();		//加载配置文件
 	}
 	
 	public static ResponseFilter create(){
@@ -39,7 +39,15 @@ public class ResponseFilter {
 	public String getRedirect(){
 		return redirect.toString();
 	}
-	
+	/**
+	 * 根据请求地址创建不同的响应类进行处理
+	 * @author tiang
+	 * @date 2017-4-18
+	 * @version 1.0
+	 * @param url 请求地址
+	 * @param ex http上下文
+	 * @return http响应
+	 */
 	public HttpResponse getResponse(String url, HttpExchange ex){
 		String res = redirect.get(url);
 		HttpResponse response = null;

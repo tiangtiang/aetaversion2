@@ -25,10 +25,14 @@ public class ReceiveHandler implements HttpHandler{
 	public void handle(HttpExchange exchange) {
 		// TODO Auto-generated method stub
 		String url = exchange.getRequestURI().toString();
+		System.out.println("请求"+url+"...");
 		HttpResponse res = ResponseFilter.create().getResponse(url, exchange);
-		if(res == null)
+		if(res == null){
 			res = new NotFoundResponse(exchange);
+			System.out.println("找不到"+url+"...");
+		}	
 		res.response();
+		System.out.println("响应"+url+"...");
 	}
 
 }
