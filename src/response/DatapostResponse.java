@@ -2,14 +2,14 @@ package response;
 
 import receive.SessionState;
 import request.DatapostRequest;
+import util.HttpResponse;
 
 import com.sun.net.httpserver.HttpExchange;
 
-import util.HttpResponse;
-
 public class DatapostResponse extends HttpResponse {
 
-	private DatapostRequest request;
+	private final DatapostRequest request;
+
 	public DatapostResponse(HttpExchange ex) {
 		super(ex);
 		// TODO Auto-generated constructor stub
@@ -20,14 +20,14 @@ public class DatapostResponse extends HttpResponse {
 	public void response() {
 		// TODO Auto-generated method stub
 		SessionState state = request.judgeSession();
-		if(state!=SessionState.Valid){
+		if (state != SessionState.Valid) {
 			new SessionErrorResponse(exchange, state).response();
-		}else{
+		} else {
 			boolean badRequest = request.validateParams("time", "probeId",
-					"dataType", "account", "length");
-			if(badRequest){
+					"dataType", "account", "length", "terminalId");
+			if (badRequest) {
 				new BadRequestResponse(exchange).response();
-			}else{
+			} else {
 				write("result=success");
 				request.insertToDB();
 			}
