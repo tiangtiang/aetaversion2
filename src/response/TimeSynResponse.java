@@ -26,14 +26,19 @@ public class TimeSynResponse extends HttpResponse{
 		// TODO Auto-generated method stub
 		SessionState state = request.judgeSession();
 		if(state == SessionState.Valid){
-			write(getresponseString());
+			boolean badRequest = request.isBadRequest();
+			if(badRequest){
+				new BadRequestResponse(exchange, request.getResult()).response();
+			}else{
+				write(getresponseString());
+			}
 		}else{
 			new SessionErrorResponse(exchange, state).response();
 		}
 	}
 	
 	private String getresponseString(){
-		return "time="+System.currentTimeMillis()/1000;
+		return "result=success&time="+System.currentTimeMillis()/1000;		//成功，返回时间戳
 	}
 
 }

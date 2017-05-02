@@ -12,7 +12,8 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class DBPool {
 	
 	//数据源Map
-	private static Map<String,Connection> dataSourseMap = new HashMap<String,Connection>();
+//	private static Map<String,Connection> dataSourseMap = new HashMap<String,Connection>();
+	private static Map<String,ComboPooledDataSource> dataSourseMap = new HashMap<String,ComboPooledDataSource>();
 	
 	private static DBPool pool = new  DBPool();
 	private DBPool(){
@@ -35,12 +36,8 @@ public class DBPool {
 		List<String> dbNames = DbConnectName.getDbNames();
 		System.setProperty("com.mchange.v2.c3p0.cfg.xml","conf/c3p0-config.xml");
 		for(int i = 0;i < dbNames.size();i++){
-			try {
-				dataSourseMap.put(dbNames.get(i), new ComboPooledDataSource(dbNames.get(i)).getConnection());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//				dataSourseMap.put(dbNames.get(i), new ComboPooledDataSource(dbNames.get(i)).getConnection());
+			dataSourseMap.put(dbNames.get(i), new ComboPooledDataSource(dbNames.get(i)));
 		}
 	}  
 	
@@ -65,11 +62,18 @@ public class DBPool {
 	 * @modifyContent 修改内容
 	*/
 	public Connection getConnection(String connName) {
-		//		ComboPooledDataSource CPDS = dataSourseMap.get(connName);
+				ComboPooledDataSource CPDS = dataSourseMap.get(connName);
 //		System.out.println("startTime:"+new Date());
-//		Connection conn = CPDS.getConnection();
+		Connection conn = null;
+		try {
+			conn = CPDS.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		System.out.println("endTime:"+new Date());
-		return dataSourseMap.get(connName);
+//		return dataSourseMap.get(connName);
+		return conn;
 	}
 	
 	

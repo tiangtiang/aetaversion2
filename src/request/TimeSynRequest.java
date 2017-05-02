@@ -15,6 +15,7 @@ public class TimeSynRequest extends HttpRequest{
 		super(ex);
 		// TODO Auto-generated constructor stub
 		initParaMap();
+		validTerminalId();
 	}
 
 }

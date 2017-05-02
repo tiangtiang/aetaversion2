@@ -18,6 +18,7 @@ public class WarnRequest extends HttpRequest {
 		super(ex);
 		// TODO Auto-generated constructor stub
 		initParaMap();
+		validTerminalId();
 	}
 
 	public boolean insertToDB(Map<String, String> params) {
@@ -61,12 +62,18 @@ public class WarnRequest extends HttpRequest {
 				if (effectedRows > 0)
 					result = true;
 				prestmt.close();
-				// conn.close();
 			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}

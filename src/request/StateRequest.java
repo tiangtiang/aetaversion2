@@ -10,7 +10,10 @@ public class StateRequest extends HttpRequest {
 		super(ex);
 		// TODO Auto-generated constructor stub
 		initParaMap();
+		validTerminalId();
+		String type = getType();
+		if (type.equalsIgnoreCase("dev03"))
+			validProbeId();
 	}
-	
 
 }

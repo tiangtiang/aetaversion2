@@ -37,7 +37,7 @@ public class LogfileResponse extends HttpResponse{
 					"logContent", "terminalId");
 			
 			if(badRequest){			//请求无效
-				new BadRequestResponse(exchange).response();
+				new BadRequestResponse(exchange, request.getResult()).response();
 			}else{
 				write("result=success");
 				ThreadPool.execute(new LogfileThread(params));

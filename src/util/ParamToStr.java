@@ -19,4 +19,8 @@ public class ParamToStr {
 		String str = changeToString(map);
 		System.out.println(str);
 	}
+	
+	public static String formResult(String code, String msg){
+		return "failCode="+code+"&failReason="+msg;
+	}
 }

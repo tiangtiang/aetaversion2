@@ -1,8 +1,8 @@
 package response;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import util.HttpResponse;
+
+import com.sun.net.httpserver.HttpExchange;
 /**
  * 请求有问题时回复响应
  * @author tiang
@@ -11,15 +11,19 @@ import util.HttpResponse;
  */
 public class BadRequestResponse extends HttpResponse{
 
-	public BadRequestResponse(HttpExchange ex) {
+//	private Logger log = Logger.getLogger(this.getClass());
+	String result;
+	public BadRequestResponse(HttpExchange ex, String result) {
 		super(ex);
 		// TODO Auto-generated constructor stub
+		this.result = "result=fail&"+result;
 	}
 
 	@Override
 	public void response() {
 		// TODO Auto-generated method stub
-		write(400, "BadRequest");
+//		log.debug(result);
+		write(200, result);
 	}
 
 }

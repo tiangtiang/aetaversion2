@@ -57,7 +57,7 @@ public class LogfileThread implements Runnable {
 					+ ",'" + logContent + "')");
 			prestmt.executeUpdate();
 			prestmt.close();
-			// conn.close();
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -89,9 +89,15 @@ public class LogfileThread implements Runnable {
 			prestmt = conn.prepareStatement(sql);
 			prestmt.executeUpdate();
 			prestmt.close();
-			// conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

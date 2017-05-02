@@ -34,7 +34,7 @@ public class WarnResponse extends HttpResponse {
 			boolean badRequest = request.isBadRequest(params, "terminalId",
 					"time", "warningType", "warningMsg");
 			if(badRequest)		//请求无效
-				new BadRequestResponse(exchange).response();
+				new BadRequestResponse(exchange, request.getResult()).response();
 			else{				//请求有效，发送是否插入成功
 				write(getResponseString(request.insertToDB(params)));
 			}
@@ -44,6 +44,7 @@ public class WarnResponse extends HttpResponse {
 	}
 	
 	private String getResponseString(boolean isSuccess){
-		return "result="+(isSuccess?"success":"fail");
+		//失败类型为找不到警告类型
+		return "result="+(isSuccess?"success":"fail&failCode=FC_003&failReason=unknownWarning");
 	}
 }

@@ -39,10 +39,10 @@ public class StateResponse extends HttpResponse {
 			boolean badRequest = request.isBadRequest(params, "deviceType",
 					"deviceId", "stateList", "terminalId");
 			if (badRequest) { // 请求无效
-				new BadRequestResponse(exchange).response();
+				new BadRequestResponse(exchange, request.getResult()).response();
 			} else {
+				write(getResponseString(true));			//接收成功
 				ThreadPool.execute(new StateThread(params)); // 插入数据库
-				write(getResponseString(true));
 			}
 		}
 	}

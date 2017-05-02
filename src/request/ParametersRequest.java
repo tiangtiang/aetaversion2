@@ -17,6 +17,10 @@ public class ParametersRequest extends HttpRequest {
 	public ParametersRequest(HttpExchange ex) {
 		super(ex);
 		initParaMap();
+		validTerminalId();
+		String type = getType();
+		if (type.equalsIgnoreCase("dev03"))
+			validProbeId();
 	}
 
 	public String getParameters(Map<String, String> params) {
@@ -38,7 +42,7 @@ public class ParametersRequest extends HttpRequest {
 				if (ret.next()) {// 如果有新的参数则返回
 					int paramsCount = ret.getInt("Count");
 					for (int i = 1; i <= paramsCount; i++) {
-						result += "&para" + i + "="
+						result += "$para" + i + "="
 								+ ret.getInt("P" + String.valueOf(i));
 					}
 					result = result.substring(1);
@@ -49,13 +53,20 @@ public class ParametersRequest extends HttpRequest {
 							+ "=" + deviceId);
 					prestmt.executeUpdate();
 					prestmt.close();
-					// conn.close();
+
 				} else {
 					result = null;
 				}
 
 			} catch (SQLException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		// return "{para1=value1&para2=value2}";
@@ -63,7 +74,8 @@ public class ParametersRequest extends HttpRequest {
 	}
 
 	public int countParams(String params) {
-		String[] para = params.split("&");
+		// "$"有特殊含义需要转义
+		String[] para = params.split("\\$");
 		return para.length;
 	}
 

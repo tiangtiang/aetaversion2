@@ -19,7 +19,7 @@ import com.sun.net.httpserver.HttpExchange;
  */
 public class ParametersResponse extends HttpResponse {
 
-	private final ParametersRequest request;
+	private ParametersRequest request;
 
 	public ParametersResponse(HttpExchange ex) {
 		super(ex);
@@ -38,22 +38,26 @@ public class ParametersResponse extends HttpResponse {
 			boolean badRequest = request.isBadRequest(params, "deviceType",
 					"deviceId");
 			if (badRequest) {
-				new BadRequestResponse(exchange).response();
+				new BadRequestResponse(exchange, request.getResult()).response();
 			} else {
 				// 参数字符串
 				String paraStr = request.getParameters(params);
 				if (paraStr == null)
 					write("result=null");
-				int paraNum = request.countParams(paraStr);
-				write(getResponseString(params, paraStr, paraNum));
+				else{
+					int paraNum = request.countParams(paraStr);
+					write(getResponseString(params, paraStr, paraNum));
+				}
+				
 			}
 		}
 	}
-
+	
 	public String getResponseString(Map<String, String> params, String paraStr,
 			int paraNum) {
-		params.put("paramNum", paraNum + "");
-		params.put("params", paraStr);
+		params.put("result", "success");
+		params.put("paramNum", paraNum + "");		//参数数量
+		params.put("params", paraStr);				//参数字符串
 		return ParamToStr.changeToString(params);
 	}
 

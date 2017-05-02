@@ -3,11 +3,11 @@
 		<property name="user">root</property>
     	<property name="password">xiaoying123</property>
    		<property name="driverClass">com.mysql.jdbc.Driver</property>
-    	<property name="jdbcUrl">jdbc:mysql://10.4.101.106:3306/aeta_version2</property>
-		<property name="initialPoolSize">5</property> 
+    	<property name="jdbcUrl">jdbc:mysql://ganying:3306/aeta_version2</property>
+		<property name="initialPoolSize">10</property> 
 		<property name="minPoolSize">3</property> 
-		<property name="maxPoolSize">10</property> 
-		<property name="maxIdleTime">500</property>
+		<property name="maxPoolSize">100</property> 
+		<property name="maxIdleTime">10</property>
 	</named-config> 
 	<named-config name="aetaVersion_ds_2"> 
 		<property name="user">root</property>

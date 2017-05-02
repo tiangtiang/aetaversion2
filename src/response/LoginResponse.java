@@ -24,7 +24,7 @@ public class LoginResponse extends HttpResponse{
 		// TODO Auto-generated method stub
 		boolean login = request.login();
 		if(request.isBadRequest())
-			new BadRequestResponse(exchange).response();
+			new BadRequestResponse(exchange, request.getResult()).response();
 		else
 			write(getResponseString(login));
 	}
@@ -40,7 +40,8 @@ public class LoginResponse extends HttpResponse{
 		if(login){
 			return "result=success&sessionId="+request.keepSession();
 		}else{
-			return "result=fail";
+			//用户名密码不正确
+			return "result=fail&failCode=FC_002&failReason=terminalId or password was not correct";
 		}
 	}
 }

@@ -2,6 +2,8 @@ package util;
 
 import java.io.*;
 
+import org.apache.log4j.Logger;
+
 import com.sun.net.httpserver.HttpExchange;
 
 /**
@@ -12,6 +14,7 @@ import com.sun.net.httpserver.HttpExchange;
  */
 public abstract class HttpResponse {
 	protected HttpExchange exchange;
+	protected Logger log = Logger.getLogger(this.getClass());
 	
 	public HttpResponse(HttpExchange ex){
 		exchange = ex;
@@ -36,6 +39,7 @@ public abstract class HttpResponse {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
 		try {
 			exchange.sendResponseHeaders(200, text.length());
+			log.info("response content: "+text);
 			writer.write(text);
 			writer.close();
 		} catch (IOException e) {
@@ -56,6 +60,7 @@ public abstract class HttpResponse {
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
 		try {
 			exchange.sendResponseHeaders(state, text.length());
+			log.info("response content: "+text);
 			writer.write(text);
 			writer.close();
 		} catch (IOException e) {

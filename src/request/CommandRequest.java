@@ -15,7 +15,8 @@ public class CommandRequest extends HttpRequest {
 
 	public CommandRequest(HttpExchange ex) {
 		super(ex);
-		// initParaMap();
+		initParaMap();
+		validTerminalId();
 	}
 
 	public String searchCommand() {
@@ -47,6 +48,13 @@ public class CommandRequest extends HttpRequest {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		// return "time=1492677158&deviceType=dev01&deviceId=15&cmdLength=20&"+
 		// "command=ls /root -l";

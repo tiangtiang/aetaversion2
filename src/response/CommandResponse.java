@@ -27,11 +27,15 @@ public class CommandResponse extends HttpResponse {
 		if(state!=SessionState.Valid){			//session无效
 			new SessionErrorResponse(exchange, state).response();
 		}else{
-			String cmd = request.searchCommand();		//获取命令
-			if(cmd == null)			//如果没有新命令
-				write("result=noCommand");
-			else					//有新命令
-				write(cmd);
+			boolean badRequest = request.isBadRequest();
+			if(badRequest){
+				new BadRequestResponse(exchange, request.getResult()).response();
+			}else{
+				String cmd = request.searchCommand();		//获取命令
+				String result = cmd == null?"result=noCommand":"result=success&"+cmd;
+				write(result);
+	//			log.debug(result);
+			}
 		}
 	}
 

@@ -61,7 +61,8 @@ public class DatapostThread implements Runnable {
 		// 特征值-------全局峰值频率
 		double peak_frequency = peak.getPeak_frequency();
 		// 特征值-------全局峰值幅值
-		float peak_amplitude = peak.getPeak_amplitude();
+		float peak_amplitude = getPeakAmplitude(dataType,
+				peak.getPeak_amplitude());
 		Connection conn = DBPool.create().getConnection("aetaVersion_ds_1");
 		PreparedStatement prestmt;
 		// 开启事务
@@ -99,10 +100,17 @@ public class DatapostThread implements Runnable {
 			}
 			prestmt.close();
 			conn.setAutoCommit(true);
-			// conn.close();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -131,9 +139,15 @@ public class DatapostThread implements Runnable {
 			prestmt.setFloat(4, tempreture);
 			prestmt.executeUpdate();
 			prestmt.close();
-			// conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -215,6 +229,17 @@ public class DatapostThread implements Runnable {
 		float result = 0;
 		short temp = (short) ((0xff & data[1]) | (0xff00 & (data[0] << 8)));
 		result = (float) (temp / 100.0);
+		return result;
+	}
+
+	// 计算原始数据的全局峰值幅值，计算方式为：将经过把傅里叶变换之后的幅值作转换成电压的处理
+	public float getPeakAmplitude(int dataType, float rawPeakAmplitude) {
+		float result;
+		if (dataType >= 1 && dataType <= 2)
+			result = (rawPeakAmplitude / 32767) * 12.288f;// 把电磁对应的原始数据的全局峰值幅值转化为对应的电压值，计算方式为(average/32767)*12.88
+		else {
+			result = (rawPeakAmplitude / 32767) * 5f;// 把地声对应的原始数据的全局峰值幅值转化为对应的电压值，计算方式为(average/32767)*5
+		}
 		return result;
 	}
 

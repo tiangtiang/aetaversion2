@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
+import receive.ProbeTerminalMap;
 import receive.Session;
 import receive.SessionState;
 
@@ -31,12 +34,51 @@ public class HttpRequest {
 	// http请求参数信息
 	private final Map<String, String> paramMap = new HashMap<String, String>();
 
-	protected boolean badRequest = false;
+	protected boolean badRequest = false; // 请求是否有误
+	protected String result; // 错误信息
+	protected Logger log = Logger.getLogger(this.getClass());
+
+	public String getResult() {
+		return result;
+	}
+
+	public String getType() {
+		return getParam("deviceType");
+	}
 
 	public HttpRequest(HttpExchange ex) {
 		exchange = ex;
 		initHeaderMap();
 		// initParaMap();
+	}
+
+	/**
+	 * 判断终端编号是否与session中的编号匹配
+	 */
+	public void validTerminalId() {
+		String sessionTerminalId = getTerminalId(); // session保存的终端编号
+		String parameterTerminalId = getParam("terminalId"); // 报文体重的终端编号
+		if (!sessionTerminalId.equals(parameterTerminalId)) {
+			badRequest = true; // 请求有错误
+			result = ParamToStr
+					.formResult("FC_006", "terminalId was not match");
+			log.error(result);
+		}
+	}
+
+	/**
+	 * 判断探头编号是否与session中的终端编号匹配
+	 */
+	public void validProbeId() {
+		String probeId = getParam("deviceId"); // 报文体中的探头编号
+		// 获取map中对应的终端编号
+		String terminalId = new ProbeTerminalMap().getTerminalId(probeId);
+		String sessionterminalId = getTerminalId(); // 获取session中的终端编号
+		if (terminalId == null || !sessionterminalId.equals(terminalId)) {
+			badRequest = true; // 请求有错误
+			result = ParamToStr.formResult("FC_007", "probeId was not match");
+			log.error(result);
+		}
 	}
 
 	/**
@@ -179,8 +221,8 @@ public class HttpRequest {
 			if (entry.length < 2) // 如果长度小于2，则跳过
 				continue;
 			else
-				param.put(entry[0].toLowerCase().trim(), pair.substring(
-						entry[0].length() + 1).trim()); // 处理value里面有等号的情况
+				param.put(entry[0].toLowerCase().trim(),
+						pair.substring(entry[0].length() + 1).trim()); // 处理value里面有等号的情况
 		}
 		return true;
 	}
@@ -263,7 +305,8 @@ public class HttpRequest {
 			e.printStackTrace();
 		}
 		String str = sb.toString();
-		System.out.println(str);
+		// System.out.println(str);
+		log.info("request content: " + str);
 		return str.length() != 0 ? str.substring(0, str.length() - 1) : null;
 	}
 
@@ -359,6 +402,10 @@ public class HttpRequest {
 			}
 			if (value == null) {
 				badRequest = true;
+				// 缺少参数key
+				result = "failCode=FC_001&failReason=request lack of parameter: "
+						+ key;
+				log.error(result);
 				break;
 			} else {
 				params.put(key, value);

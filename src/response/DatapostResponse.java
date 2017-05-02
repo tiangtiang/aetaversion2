@@ -9,6 +9,7 @@ import com.sun.net.httpserver.HttpExchange;
 public class DatapostResponse extends HttpResponse {
 
 	private final DatapostRequest request;
+//	private Logger log = Logger.getLogger(this.getClass());
 
 	public DatapostResponse(HttpExchange ex) {
 		super(ex);
@@ -26,9 +27,11 @@ public class DatapostResponse extends HttpResponse {
 			boolean badRequest = request.validateParams("time", "probeId",
 					"dataType", "account", "length", "terminalId");
 			if (badRequest) {
-				new BadRequestResponse(exchange).response();
+				new BadRequestResponse(exchange, request.getResult()).response();
 			} else {
-				write("result=success");
+				String result = "result=success";
+				write(result);
+//				log.debug(result);
 				request.insertToDB();
 			}
 		}

@@ -103,8 +103,8 @@ public class StateThread implements Runnable {
 		// DataRate-网口数据率
 		int DataRate = Integer.parseInt(kvs.get("DataRate".toLowerCase()));
 		// BadPackRate-坏包率
-		float BadPackRate = Float.parseFloat(kvs.get("BadPackRate"
-				.toLowerCase()));
+		int BadPackRate = Integer
+				.parseInt(kvs.get("BadPackRate".toLowerCase()));
 		try {
 			PreparedStatement prestmt;
 			// 开启事务
@@ -170,9 +170,15 @@ public class StateThread implements Runnable {
 			}
 			prestmt.close();
 			conn.setAutoCommit(true);
-			// conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
@@ -190,8 +196,8 @@ public class StateThread implements Runnable {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String CurrentSysTimeString = format.format(CurrentSysTime);
 		// 获取终端的系统时间
-		long TerminalSysTime = Long.parseLong(kvs
-				.get("TimeStamp".toLowerCase())) * 1000;
+		long TerminalSysTime = Long
+				.parseLong(kvs.get("TimeStamp".toLowerCase())) * 1000;
 		Date time_tmp = new Date(TerminalSysTime);
 		String TerminalTime = format.format(time_tmp);
 		// 终端运行的软件版本信息
@@ -277,9 +283,16 @@ public class StateThread implements Runnable {
 			}
 			prestmt.close();
 			conn.setAutoCommit(true);
-			// conn.close();
+
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
