@@ -105,8 +105,8 @@ public class StateThread implements Runnable {
 		// BadPackRate-坏包率
 		int BadPackRate = Integer
 				.parseInt(kvs.get("BadPackRate".toLowerCase()));
+		PreparedStatement prestmt = null;
 		try {
-			PreparedStatement prestmt;
 			// 开启事务
 			conn.setAutoCommit(false);
 			// 插入终端状态数据到terminalStatus_2017表中
@@ -121,12 +121,14 @@ public class StateThread implements Runnable {
 							+ FreeSpaceRate + "," + Network + "," + DataRate
 							+ "," + BadPackRate + ")");
 			int flag1 = prestmt.executeUpdate();
+			prestmt.close();
 			if (flag1 > 0) {
 				// 查看当前终端状态表是否存在此deviceId的状态数据
 				prestmt = conn.prepareStatement("select t.* from "
 						+ tableName_current + " t where t.TerminalID = "
 						+ deviceId);
 				ResultSet ret = prestmt.executeQuery();
+				prestmt.close();
 				if (ret.next()) {// 如果存在，则进行update操作
 					prestmt = conn.prepareStatement("update "
 							+ tableName_current + " t set ServerSysTime='"
@@ -139,6 +141,7 @@ public class StateThread implements Runnable {
 							+ ",DataRate =" + DataRate + ",BadPack="
 							+ BadPackRate + " where t.TerminalID=" + deviceId);
 					int flag2 = prestmt.executeUpdate();
+					prestmt.close();
 					if (flag2 > 0) {// 操作成功，提交事务
 						conn.commit();
 						result = true;
@@ -147,7 +150,7 @@ public class StateThread implements Runnable {
 						conn.rollback();
 					}
 				} else {// 如果不存在则进行insert操作
-					prestmt = conn
+					PreparedStatement preparedStatement = conn
 							.prepareStatement("INSERT into "
 									+ tableName_current
 									+ "(TerminalID,ServerSysTime,TerminalSysTime,TerStartTime,TerSoftVersion,SDStatus,FreeSpace,NetworkStatus,DataRate,BadPack)"
@@ -158,7 +161,8 @@ public class StateThread implements Runnable {
 									+ TerStartTime + "'," + SDStatus + ","
 									+ FreeSpaceRate + "," + Network + ","
 									+ DataRate + "," + BadPackRate + ")");
-					int flag2 = prestmt.executeUpdate();
+					int flag2 = preparedStatement.executeUpdate();
+					preparedStatement.close();
 					if (flag2 > 0) {// 操作成功，提交事务
 						result = true;
 						conn.commit();
@@ -167,8 +171,8 @@ public class StateThread implements Runnable {
 						conn.rollback();
 					}
 				}
+				prestmt.close();
 			}
-			prestmt.close();
 			conn.setAutoCommit(true);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -258,7 +262,7 @@ public class StateThread implements Runnable {
 						conn.rollback();
 					}
 				} else {// 如果不存在则进行insert操作
-					prestmt = conn
+					PreparedStatement preparedStatement = conn
 							.prepareStatement("INSERT into "
 									+ tableName_current
 									+ "(ProbeID,ProbeType,TerminalID,ServerSysTime,TerminalSysTime,ProSoftVersion,DataEnable,SyncInterVal,ZeroCorrectValue,DataAmpTimes)"
@@ -268,7 +272,8 @@ public class StateThread implements Runnable {
 									+ TerminalTime + "','" + Version + "',"
 									+ EN + "," + SynInterval + ","
 									+ zerdrf_comp + "," + multiple + ")");
-					int flag2 = prestmt.executeUpdate();
+					int flag2 = preparedStatement.executeUpdate();
+					preparedStatement.close();
 					if (flag2 > 0) {// 操作成功，提交事务
 						result = true;
 						conn.commit();

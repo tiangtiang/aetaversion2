@@ -98,25 +98,25 @@ public class DatapostRequest extends HttpRequest {
 	 */
 	private boolean validateData() {
 		try {
-			int dataType = Integer.parseInt(params.get("datatype"));
+			int dataType = Integer.parseInt(params.get("dataType"));
 			int account = Integer.parseInt(params.get("account"));
 			if (dataType == 4) {
 				if (account == 150000)
-					return true;
+					return false;
 			} else if (dataType == 1 || dataType == 2 || dataType == 3) {
 				if (account == 30000)
-					return true;
+					return false;
 			} else if (dataType == 7)
 				if (account == 1)
-					return true;
+					return false;
 			// 数据类型与其规定的点数不符
 			result = "failCode=FC_004&failReason=the account(" + account
 					+ ") of data mismatch the dataType(" + dataType + ")";
 			log.error(result);
-			return false;
+			return true;
 		} catch (Exception e) {
 			// TODO: handle exception
-			return false;
+			return true;
 		}
 	}
 
